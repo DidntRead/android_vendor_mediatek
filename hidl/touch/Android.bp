@@ -1,0 +1,19 @@
+cc_binary {
+    name: "lineage.touch@1.0-service.lenovo",
+    init_rc: ["lineage.touch@1.0-service.lenovo.rc"],
+    defaults: ["hidl_defaults"],
+    relative_install_path: "hw",
+    srcs: [
+        "GloveMode.cpp",
+        "KeyDisabler.cpp",
+        "service.cpp"
+    ],
+    shared_libs: [
+        "libbase",
+        "libbinder",
+        "libhidlbase",
+        "libhidltransport",
+        "libutils",
+        "vendor.lineage.touch@1.0",
+    ],
+}

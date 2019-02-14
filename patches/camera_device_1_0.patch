@@ -1,0 +1,49 @@
+diff --git a/camera/device/1.0/default/CameraDevice.cpp b/camera/device/1.0/default/CameraDevice.cpp
+index 15fcd7cd..0f80212b 100644
+--- a/camera/device/1.0/default/CameraDevice.cpp
++++ b/camera/device/1.0/default/CameraDevice.cpp
+@@ -35,6 +35,7 @@ using ::android::hardware::graphics::common::V1_0::BufferUsage;
+ using ::android::hardware::graphics::common::V1_0::PixelFormat;
+ 
+ HandleImporter CameraDevice::sHandleImporter;
++CameraDevice* sUser = nullptr;
+ 
+ Status CameraDevice::getHidlStatus(const int& status) {
+     switch (status) {
+@@ -44,6 +45,7 @@ Status CameraDevice::getHidlStatus(const int& status) {
+         case -EUSERS: return Status::MAX_CAMERAS_IN_USE;
+         case -ENODEV: return Status::INTERNAL_ERROR;
+         case -EINVAL: return Status::ILLEGAL_ARGUMENT;
++	case -EPIPE : return Status::INTERNAL_ERROR;
+         default:
+             ALOGE("%s: unknown HAL status code %d", __FUNCTION__, status);
+             return Status::INTERNAL_ERROR;
+@@ -360,8 +362,11 @@ CameraDevice::CameraHeapMemory::~CameraHeapMemory() {
+ 
+ // shared memory methods
+ camera_memory_t* CameraDevice::sGetMemory(int fd, size_t buf_size, uint_t num_bufs, void *user) {
++    if (user == nullptr) {
++	ALOGW("%s: user is empty. This seems normal for mtk camera! Using the saved one", __FUNCTION__);
++    }
+     ALOGV("%s", __FUNCTION__);
+-    CameraDevice* object = static_cast<CameraDevice*>(user);
++    CameraDevice* object = (user == nullptr)? sUser : static_cast<CameraDevice*>(user);
+     if (object->mDeviceCallback == nullptr) {
+         ALOGE("%s: camera HAL request memory while camera is not opened!", __FUNCTION__);
+         return nullptr;
+@@ -706,12 +711,11 @@ Return<Status> CameraDevice::open(const sp<ICameraDeviceCallback>& callback) {
+ 
+     initHalPreviewWindow();
+     mDeviceCallback = callback;
+-    mQDeviceCallback = vendor::qti::hardware::camera::device::V1_0::IQCameraDeviceCallback::castFrom(callback);
+-    if(mQDeviceCallback == nullptr) {
+-        ALOGI("could not cast ICameraDeviceCallback to IQCameraDeviceCallback");
+-    }
++    mQDeviceCallback = nullptr;
+ 
+     if (mDevice->ops->set_callbacks) {
++	ALOGV("%s: Saving camera device for sGetMemory", __FUNCTION__);
++	sUser = this;
+         mDevice->ops->set_callbacks(mDevice,
+                 sNotifyCb, sDataCb, sDataCbTimestamp, sGetMemory, this);
+     }

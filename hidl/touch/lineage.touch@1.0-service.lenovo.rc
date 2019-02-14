@@ -1,0 +1,4 @@
+service touch-hal-1-0-lenovo /system/bin/hw/lineage.touch@1.0-service.lenovo
+    class hal
+    user system
+    group system
