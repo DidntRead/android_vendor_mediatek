@@ -61,14 +61,5 @@ int main(int /* argc */, char* /* argv */ []) {
     fail = registerPassthroughServiceImplementation<audio::effect::V2_0::IEffectsFactory>() != OK,
     LOG_ALWAYS_FATAL_IF(fail, "Could not register audio effect API 2.0");
 
-    fail = registerPassthroughServiceImplementation<soundtrigger::V2_1::ISoundTriggerHw>() != OK &&
-           registerPassthroughServiceImplementation<soundtrigger::V2_0::ISoundTriggerHw>() != OK,
-    ALOGW_IF(fail, "Could not register soundtrigger API 2.0 nor 2.1");
-
-    fail =
-        registerPassthroughServiceImplementation<bluetooth::a2dp::V1_0::IBluetoothAudioOffload>() !=
-        OK;
-    ALOGW_IF(fail, "Could not register Bluetooth audio offload 1.0");
-
     joinRpcThreadpool();
 }
