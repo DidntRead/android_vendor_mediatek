@@ -2,10 +2,9 @@ cc_binary {
     name: "android.hardware.sensors@1.0-service.mtk",
     init_rc: ["android.hardware.sensors@1.0-service.mtk.rc"],
     defaults: ["hidl_defaults"],
+    proprietary: true,
     relative_install_path: "hw",
-    srcs: [
-	"service.cpp"
-    ],
+    srcs: ["service.cpp"],
     shared_libs: [
         "liblog",
         "libcutils",

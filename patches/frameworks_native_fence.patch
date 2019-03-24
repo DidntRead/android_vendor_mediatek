@@ -1,0 +1,36 @@
+diff --git a/libs/ui/Fence.cpp b/libs/ui/Fence.cpp
+index ff53aa8f2..f7b2683cf 100644
+--- a/libs/ui/Fence.cpp
++++ b/libs/ui/Fence.cpp
+@@ -45,6 +45,9 @@ Fence::Fence(base::unique_fd fenceFd) :
+     mFenceFd(std::move(fenceFd)) {
+ }
+ 
++Fence::~Fence() {
++}
++
+ status_t Fence::wait(int timeout) {
+     ATRACE_CALL();
+     if (mFenceFd == -1) {
+diff --git a/libs/ui/include/ui/Fence.h b/libs/ui/include/ui/Fence.h
+index ec67fa972..59e85f08d 100644
+--- a/libs/ui/include/ui/Fence.h
++++ b/libs/ui/include/ui/Fence.h
+@@ -58,6 +58,9 @@ public:
+     explicit Fence(int fenceFd);
+     explicit Fence(base::unique_fd fenceFd);
+ 
++    // Needed for our old omx libs
++    ~Fence();
++
+     // Not copyable or movable.
+     Fence(const Fence& rhs) = delete;
+     Fence& operator=(const Fence& rhs) = delete;
+@@ -138,7 +141,6 @@ public:
+ private:
+     // Only allow instantiation using ref counting.
+     friend class LightRefBase<Fence>;
+-    ~Fence() = default;
+ 
+     base::unique_fd mFenceFd;
+ };

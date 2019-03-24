@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:androidprv="http://schemas.android.com/apk/prv/res/android"
+        package="com.mediatek.ims"
+        coreApp="true"
+        android:sharedUserId="android.uid.phone"
+>
+
+	<uses-permission android:name="android.permission.READ_PRECISE_PHONE_STATE"/>
+    <uses-permission android:name="android.Manifest.permission.READ_PRIVILEGED_PHONE_STATE"/>
+
+    <application android:name="ImsApp"
+                 android:persistent="true">
+        <provider
+            android:name=".config.internal.ImsConfigProvider"
+            android:authorities="com.mediatek.ims.config.provider"
+            android:enabled="true"
+            android:exported="true" >
+        </provider>
+    </application>
+</manifest>

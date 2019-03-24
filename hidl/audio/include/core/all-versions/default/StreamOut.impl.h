@@ -67,7 +67,6 @@ class WriteThread : public Thread {
     bool threadLoop() override;
 
     void doGetLatency();
-    void doGetPresentationPosition();
     void doWrite();
 };
 
@@ -83,12 +82,6 @@ void WriteThread::doWrite() {
             mStatus.retval = Stream::analyzeStatus("write", writeResult);
         }
     }
-}
-
-void WriteThread::doGetPresentationPosition() {
-    mStatus.retval =
-        StreamOut::getPresentationPositionImpl(mStream, &mStatus.reply.presentationPosition.frames,
-                                               &mStatus.reply.presentationPosition.timeStamp);
 }
 
 void WriteThread::doGetLatency() {
@@ -114,7 +107,6 @@ bool WriteThread::threadLoop() {
                 doWrite();
                 break;
             case IStreamOut::WriteCommand::GET_PRESENTATION_POSITION:
-                doGetPresentationPosition();
                 break;
             case IStreamOut::WriteCommand::GET_LATENCY:
                 doGetLatency();
@@ -492,31 +484,10 @@ Return<Result> StreamOut::flush() {
 }
 
 // static
-Result StreamOut::getPresentationPositionImpl(audio_stream_out_t* stream, uint64_t* frames,
-                                              TimeSpec* timeStamp) {
-    // Don't logspam on EINVAL--it's normal for get_presentation_position
-    // to return it sometimes. EAGAIN may be returned by A2DP audio HAL
-    // implementation. ENODATA can also be reported while the writer is
-    // continuously querying it, but the stream has been stopped.
-    static const std::vector<int> ignoredErrors{EINVAL, EAGAIN, ENODATA};
-    Result retval(Result::NOT_SUPPORTED);
-    if (stream->get_presentation_position == NULL) return retval;
-    struct timespec halTimeStamp;
-    retval = Stream::analyzeStatus("get_presentation_position",
-                                   stream->get_presentation_position(stream, frames, &halTimeStamp),
-                                   ignoredErrors);
-    if (retval == Result::OK) {
-        timeStamp->tvSec = halTimeStamp.tv_sec;
-        timeStamp->tvNSec = halTimeStamp.tv_nsec;
-    }
-    return retval;
-}
 
 Return<void> StreamOut::getPresentationPosition(getPresentationPosition_cb _hidl_cb) {
-    uint64_t frames = 0;
     TimeSpec timeStamp = {0, 0};
-    Result retval = getPresentationPositionImpl(mStream, &frames, &timeStamp);
-    _hidl_cb(retval, frames, timeStamp);
+    _hidl_cb(Result::OK, 0, timeStamp);
     return Void();
 }
 

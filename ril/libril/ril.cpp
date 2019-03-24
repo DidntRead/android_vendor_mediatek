@@ -1283,12 +1283,12 @@ RIL_onRequestComplete(RIL_Token t, RIL_Errno s_e, void *s_response, size_t s_res
 	if (pRI->pCI->requestNumber == RIL_REQUEST_GET_IMEI) {
 	    int i = (int)socket_id;
 	    Device_ID[i*4] = (char*) response;
-	    RLOGD("IEMI= %s", Device_ID[i*4]);
+	    RLOGD("IMEI= %s", Device_ID[i*4]);
 	}
 	else if (pRI->pCI->requestNumber == RIL_REQUEST_GET_IMEISV) {
 	    int i = (int)socket_id;
 	    Device_ID[i*4 + 1] = (char*) response;
-	    RLOGD("IEMISV= %s", Device_ID[i*4 + 1]);
+	    RLOGD("IMEISV= %s", Device_ID[i*4 + 1]);
 	}
 	goto done;
     }
@@ -1297,6 +1297,8 @@ RIL_onRequestComplete(RIL_Token t, RIL_Errno s_e, void *s_response, size_t s_res
     if(e == RIL_E_REQUEST_NOT_SUPPORTED) {
 	if (pRI->pCI->requestNumber == RIL_REQUEST_DEVICE_IDENTITY) {
 	    int i = (int)socket_id;
+	    sprintf(Device_ID[i*4 + 2], "");
+	    sprintf(Device_ID[i*4 + 3], "");
 	    response = (void *) &Device_ID[i*4];
 	    responselen = sizeof(char *) * 4;
 	    e = RIL_E_SUCCESS;

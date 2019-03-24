@@ -10,7 +10,6 @@ allow nvram_daemon als_ps_device:chr_file r_file_perms;
 allow nvram_daemon mtk-adc-cali_device:chr_file rw_file_perms;
 allow nvram_daemon gsensor_device:chr_file r_file_perms;
 allow nvram_daemon gyroscope_device:chr_file r_file_perms;
-allow nvram_daemon self:capability { fowner chown dac_override fsetid };
 allow nvram_daemon nvram_device:chr_file rw_file_perms;
 allow nvram_daemon pro_info_device:chr_file rw_file_perms;
 allow nvram_daemon block_device:dir search;
