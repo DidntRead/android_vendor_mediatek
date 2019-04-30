@@ -1,0 +1,3 @@
+[submodule "Lawnchair"]
+	path = Lawnchair
+	url = https://github.com/LawnchairLauncher/Lawnchair

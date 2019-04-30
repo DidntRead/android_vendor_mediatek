@@ -1,0 +1,76 @@
+diff --git a/src/com/android/server/telecom/PhoneNumberUtilsAdapterImpl.java b/src/com/android/server/telecom/PhoneNumberUtilsAdapterImpl.java
+index 6e0068a..c68f8bf 100644
+--- a/src/com/android/server/telecom/PhoneNumberUtilsAdapterImpl.java
++++ b/src/com/android/server/telecom/PhoneNumberUtilsAdapterImpl.java
+@@ -23,12 +23,12 @@ import android.telephony.PhoneNumberUtils;
+ public class PhoneNumberUtilsAdapterImpl implements PhoneNumberUtilsAdapter {
+     @Override
+     public boolean isLocalEmergencyNumber(Context context, String number) {
+-            return TelephonyUtil.isLocalEmergencyNumber(number);
++            return PhoneNumberUtils.isLocalEmergencyNumber(context, number);
+     }
+ 
+     @Override
+     public boolean isPotentialLocalEmergencyNumber(Context context, String number) {
+-        return TelephonyUtil.isPotentialLocalEmergencyNumber(number);
++        return PhoneNumberUtils.isPotentialLocalEmergencyNumber(context, number);
+     }
+ 
+     @Override
+diff --git a/src/com/android/server/telecom/TelephonyUtil.java b/src/com/android/server/telecom/TelephonyUtil.java
+index 82991b9..ce8f990 100644
+--- a/src/com/android/server/telecom/TelephonyUtil.java
++++ b/src/com/android/server/telecom/TelephonyUtil.java
+@@ -29,7 +29,6 @@ import android.telephony.SubscriptionManager;
+ import android.telephony.TelephonyManager;
+ 
+ import com.android.internal.annotations.VisibleForTesting;
+-import org.codeaurora.internal.IExtTelephony;
+ 
+ import java.util.Collections;
+ import java.util.Comparator;
+@@ -76,42 +75,8 @@ public final class TelephonyUtil {
+     }
+ 
+     public static boolean shouldProcessAsEmergency(Context context, Uri handle) {
+-        return handle != null && isLocalEmergencyNumber(handle.getSchemeSpecificPart());
+-    }
+-
+-    private static IExtTelephony getIExtTelephony() {
+-        try {
+-            IExtTelephony ex = IExtTelephony.Stub.asInterface(ServiceManager.getService("extphone"));
+-            return ex;
+-        } catch (NoClassDefFoundError ex) {
+-            return null;
+-        }
+-    }
+-
+-    public static boolean isLocalEmergencyNumber(String address) {
+-        IExtTelephony mIExtTelephony = getIExtTelephony();
+-        boolean result = false;
+-        try {
+-            result = mIExtTelephony.isLocalEmergencyNumber(address);
+-        } catch (RemoteException ex) {
+-            Log.e(LOG_TAG, ex, "RemoteException");
+-        } catch (NullPointerException ex) {
+-            Log.e(LOG_TAG, ex, "NullPointerException");
+-        }
+-        return result;
+-    }
+-
+-    public static boolean isPotentialLocalEmergencyNumber(String address) {
+-        IExtTelephony mIExtTelephony = getIExtTelephony();
+-        boolean result = false;
+-        try {
+-            result = mIExtTelephony.isPotentialLocalEmergencyNumber(address);
+-        } catch (RemoteException ex) {
+-            Log.e(LOG_TAG, ex, "RemoteException");
+-        } catch (NullPointerException ex) {
+-            Log.e(LOG_TAG, ex, "NullPointerException");
+-        }
+-        return result;
++        return handle != null && PhoneNumberUtils.isLocalEmergencyNumber(
++                context, handle.getSchemeSpecificPart());
+     }
+ 
+     public static void sortSimPhoneAccounts(Context context, List<PhoneAccount> accounts) {

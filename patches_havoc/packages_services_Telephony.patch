@@ -1,0 +1,115 @@
+diff --git a/src/com/android/phone/PhoneUtils.java b/src/com/android/phone/PhoneUtils.java
+index eb819f5..99de011 100644
+--- a/src/com/android/phone/PhoneUtils.java
++++ b/src/com/android/phone/PhoneUtils.java
+@@ -2416,20 +2416,7 @@ public class PhoneUtils {
+      * return false.
+      */
+     public static boolean isNetworkSettingsApkAvailable() {
+-        // check whether the target handler exist in system
+-        boolean isVendorNetworkSettingApkAvailable = false;
+-        IExtTelephony extTelephony =
+-                IExtTelephony.Stub.asInterface(ServiceManager.getService("extphone"));
+-        try {
+-            if (extTelephony != null &&
+-                    extTelephony.isVendorApkAvailable("com.qualcomm.qti.networksetting")) {
+-                isVendorNetworkSettingApkAvailable = true;
+-            }
+-        } catch (RemoteException ex) {
+-            // could not connect to extphone service, launch the default activity
+-            log("couldn't connect to extphone service, launch the default activity");
+-        }
+-        return isVendorNetworkSettingApkAvailable;
++	return false;
+     }
+ 
+     private static IExtTelephony getIExtTelephony() {
+@@ -2442,69 +2429,23 @@ public class PhoneUtils {
+     }
+ 
+     public static boolean isLocalEmergencyNumber(String address) {
+-        IExtTelephony mIExtTelephony = getIExtTelephony();
+-        if (mIExtTelephony == null) {
+-            return PhoneNumberUtils.isLocalEmergencyNumber(PhoneGlobals.getInstance(), address);
+-        }
+-        try {
+-            return mIExtTelephony.isLocalEmergencyNumber(address);
+-        }catch (RemoteException ex) {
+-            return PhoneNumberUtils.isLocalEmergencyNumber(PhoneGlobals.getInstance(), address);
+-        }
++        return PhoneNumberUtils.isLocalEmergencyNumber(PhoneGlobals.getInstance(), address);
+     }
+ 
+     public static boolean isPotentialLocalEmergencyNumber(String address) {
+-        IExtTelephony mIExtTelephony = getIExtTelephony();
+-        if (mIExtTelephony == null) {
+-            return PhoneNumberUtils.isPotentialLocalEmergencyNumber(PhoneGlobals.getInstance(), address);
+-        }
+-        try {
+-            return mIExtTelephony.isPotentialLocalEmergencyNumber(address);
+-        }catch (RemoteException ex) {
+-            return PhoneNumberUtils.isPotentialLocalEmergencyNumber(PhoneGlobals.getInstance(), address);
+-        }
++        return PhoneNumberUtils.isPotentialLocalEmergencyNumber(PhoneGlobals.getInstance(), address);
+     }
+ 
+     public static boolean isEmergencyNumber(String address) {
+-        IExtTelephony mIExtTelephony = getIExtTelephony();
+-        if (mIExtTelephony == null) {
+-            return PhoneNumberUtils.isEmergencyNumber(address);
+-        }
+-        try {
+-            return mIExtTelephony.isEmergencyNumber(address);
+-        }catch (RemoteException ex) {
+-            return PhoneNumberUtils.isEmergencyNumber(address);
+-        }
++        return PhoneNumberUtils.isEmergencyNumber(address);
+     }
+ 
+     public static boolean isDeviceInSingleStandBy() {
+-        boolean result = false;
+-        IExtTelephony mIExtTelephony = getIExtTelephony();
+-        if (mIExtTelephony == null) {
+-            return result;
+-        }
+-        try {
+-            result = mIExtTelephony.isDeviceInSingleStandby();
+-        } catch (RemoteException ex) {
+-            Log.e("TelephonyConnectionService", "Exception : " + ex);
+-        } catch (NullPointerException ex) {
+-            Log.e("TelephonyConnectionService", "Exception : " + ex);
+-        }
+-        return result;
++	return false;
+     }
+ 
+     public static int getPhoneIdForECall() {
+-        int phoneId = 0;
+-        IExtTelephony mIExtTelephony = getIExtTelephony();
+-        if (mIExtTelephony == null) {
+-            return -1;
+-        }
+-        try {
+-            phoneId = mIExtTelephony.getPhoneIdForECall();
+-        } catch (RemoteException ex) {
+-            Log.e("TelephonyConnectionService", "Exceptions : " + ex);
+-        }
+-        return phoneId;
++	return -1;
+     }
+ 
+     public static int getPrimaryStackPhoneId() {
+diff --git a/src/com/android/services/telephony/TelecomAccountRegistry.java b/src/com/android/services/telephony/TelecomAccountRegistry.java
+index 8e1125a..55688b3 100644
+--- a/src/com/android/services/telephony/TelecomAccountRegistry.java
++++ b/src/com/android/services/telephony/TelecomAccountRegistry.java
+@@ -1033,8 +1033,7 @@ final class TelecomAccountRegistry {
+             // slot which is bound to primary modem stack, for emergency numbers since
+             // no actual SIM is needed for dialing emergency numbers but a phone account is.
+             if (mAccounts.isEmpty()) {
+-                mAccounts.add(new AccountEntry(PhoneFactory.getPhone(
+-                        PhoneUtils.getPrimaryStackPhoneId()), true /* emergency */,
++                mAccounts.add(new AccountEntry(PhoneFactory.getDefaultPhone(), true /* emergency */,
+                         false /* isDummy */));
+             }
+ 
