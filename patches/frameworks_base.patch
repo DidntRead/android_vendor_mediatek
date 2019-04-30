@@ -1,0 +1,26 @@
+diff --git a/core/jni/fd_utils.cpp b/core/jni/fd_utils.cpp
+index 4ff1cacd..580ac2de 100644
+--- a/core/jni/fd_utils.cpp
++++ b/core/jni/fd_utils.cpp
+@@ -43,6 +43,7 @@ static const char* kPathWhitelist[] = {
+   "/dev/urandom",
+   "/dev/ion",
+   "/dev/dri/renderD129", // Fixes b/31172436
++  "/proc/ged",
+ };
+ 
+ static const char kFdPath[] = "/proc/self/fd";
+diff --git a/data/etc/platform.xml b/data/etc/platform.xml
+index ab90e1b7..6912b5f9 100644
+--- a/data/etc/platform.xml
++++ b/data/etc/platform.xml
+@@ -128,6 +128,9 @@
+          no longer needs to be mapped to gids and break grant propagation. -->
+     <permission name="android.permission.READ_EXTERNAL_STORAGE" />
+     <permission name="android.permission.WRITE_EXTERNAL_STORAGE" />
++        <group gid="sdcard_r" />
++        <group gid="sdcard_rw" />
++        <group gid="media_rw" /> 
+ 
+     <!-- ================================================================== -->
+     <!-- ================================================================== -->
