@@ -1,8 +1,8 @@
-diff --git a/liblog/logger_write.c b/liblog/logger_write.c
-index 2754e6e..00071c4 100644
---- a/liblog/logger_write.c
-+++ b/liblog/logger_write.c
-@@ -725,3 +725,19 @@ LIBLOG_ABI_PUBLIC int android_get_log_transport() {
+diff --git a/liblog/logger_write.cpp b/liblog/logger_write.cpp
+index 7fa3f43..745a2e4 100644
+--- a/liblog/logger_write.cpp
++++ b/liblog/logger_write.cpp
+@@ -704,3 +704,19 @@ int android_get_log_transport() {
  
    return ret;
  }
@@ -16,7 +16,7 @@ index 2754e6e..00071c4 100644
 +    int prio;
 +};
 +
-+LIBLOG_ABI_PUBLIC void __attribute__((weak)) __xlog_buf_printf(int bufid __unused, const struct xlog_record *xlog_record __unused, ...) {
++void __attribute__((weak)) __xlog_buf_printf(int bufid __unused, const struct xlog_record *xlog_record __unused, ...) {
 +    va_list args;
 +    va_start(args, xlog_record);
 +    __android_log_vprint(xlog_record->prio, xlog_record->tag_str, xlog_record->fmt_str, args);
