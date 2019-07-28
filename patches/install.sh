@@ -17,4 +17,6 @@ patch -p1 <../../vendor/mediatek/patches/hardware_ril.patch
 cd ../..
 cd build
 patch -p1 <../vendor/mediatek/patches/build.patch
-cd ..
+cd soong
+patch -p1 <../../vendor/mediatek/patches/build_soong.patch
+cd ../..
