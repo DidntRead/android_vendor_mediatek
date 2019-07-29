@@ -1,12 +1,30 @@
-diff --git a/liblog/logger_write.cpp b/liblog/logger_write.cpp
-index 7fa3f43..745a2e4 100644
---- a/liblog/logger_write.cpp
-+++ b/liblog/logger_write.cpp
-@@ -704,3 +704,19 @@ int android_get_log_transport() {
+diff --git a/init/service.cpp b/init/service.cpp
+index 47f4db9..69af605 100644
+--- a/init/service.cpp
++++ b/init/service.cpp
+@@ -80,13 +80,7 @@ static Result<std::string> ComputeContextFromExecutable(const std::string& servi
+         computed_context = new_con;
+         free(new_con);
+     }
+-    if (rc == 0 && computed_context == mycon.get()) {
+-        return Error() << "File " << service_path << "(labeled \"" << filecon.get()
+-                       << "\") has incorrect label or no domain transition from " << mycon.get()
+-                       << " to another SELinux domain defined. Have you configured your "
+-                          "service correctly? https://source.android.com/security/selinux/"
+-                          "device-policy#label_new_services_and_address_denials";
+-    }
++    
+     if (rc < 0) {
+         return Error() << "Could not get process context";
+     }
+diff --git a/liblog/include/log/log.h b/liblog/include/log/log.h
+index 5928649..a04fa40 100644
+--- a/liblog/include/log/log.h
++++ b/liblog/include/log/log.h
+@@ -164,6 +164,17 @@ clockid_t android_log_clockid(void);
+  */
+ void __android_log_close(void);
  
-   return ret;
- }
-+
 +#ifndef __unused
 +#define __unused  __attribute__((__unused__))
 +#endif
@@ -15,6 +33,32 @@ index 7fa3f43..745a2e4 100644
 +    const char *fmt_str;
 +    int prio;
 +};
++
++void __attribute__((weak)) __xlog_buf_printf(int bufid __unused, const struct xlog_record *xlog_record __unused, ...);
++
+ #if defined(__clang__)
+ #pragma clang diagnostic pop
+ #endif
+diff --git a/liblog/liblog.map.txt b/liblog/liblog.map.txt
+index ce4c53c..2a93d24 100644
+--- a/liblog/liblog.map.txt
++++ b/liblog/liblog.map.txt
+@@ -8,6 +8,7 @@ LIBLOG {
+     __android_log_print;
+     __android_log_vprint;
+     __android_log_write;
++    __xlog_buf_printf;
+   local:
+     *;
+ };
+diff --git a/liblog/logger_write.cpp b/liblog/logger_write.cpp
+index a4b3cd7..773be40 100644
+--- a/liblog/logger_write.cpp
++++ b/liblog/logger_write.cpp
+@@ -656,3 +656,10 @@ int android_get_log_transport() {
+ 
+   return ret;
+ }
 +
 +void __attribute__((weak)) __xlog_buf_printf(int bufid __unused, const struct xlog_record *xlog_record __unused, ...) {
 +    va_list args;
