@@ -1,0 +1,14 @@
+cc_library {
+    name:"libnvram",
+    proprietary: true,
+    static_libs: ["libfstab"],
+    shared_libs: ["libc",
+		  "libcutils",
+		  "libcustom_nvram",
+		  "libnvram_platform",
+		  "libbase",
+		  "liblog"],
+    srcs: ["libnvram.c"],
+    local_include_dirs: ["system/core/include/private",
+			 "system/core/fs_mgr/include_fstab/fstab"],
+}
