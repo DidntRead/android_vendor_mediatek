@@ -9,6 +9,6 @@ cc_library {
 		  "libbase",
 		  "liblog"],
     srcs: ["libnvram.c"],
-    local_include_dirs: ["system/core/include/private",
+    include_dirs: ["system/core/include/private",
 			 "system/core/fs_mgr/include_fstab/fstab"],
 }
